@@ -16,7 +16,7 @@ int main() {
     ifstream inFile("210-lab-13-grades.txt");
 
     if (!inFile.is_open) {
-        cout << "Error: file was not opened successfully" << endl;
+        cout << "Error: input file was not opened successfully" << endl;
         return -1;
     }
 
@@ -24,10 +24,27 @@ int main() {
 
     while(!inFile.eof()) {
         static int i = 0;
-        cin >> studentsList[i].ID;
-        cin >> studentsList[i].grade;
-        cin.ignore();
+        inFile >> studentsList[i].ID;
+        inFile >> studentsList[i].grade;
+        inFile.ignore();
         i++;
+    }
+
+    inFile.close();
+
+    sortArray();
+
+    ofstream outFile("210-lab-13-sorted-grades.txt");
+
+    if (!outFile.is_open) {
+        cout << "Error: output file was not opened successfully" << endl;
+        return -1;
+    }
+
+    for (int i = 0; i < MAX_LENGTH; ++i) {
+        if (studentsList[i].ID == 0)
+            break;
+        outFile << studentsList[i].ID << " " << studentsList[i].grade << endl;
     }
 
     return 1;
@@ -36,8 +53,12 @@ int main() {
 void sortArray(Student *list) {
     for (int i = 0; i < MAX_LENGTH - 1; ++i) {
       int lowest = i;
+      if (list[i]->ID == 0)
+        break;
       for (int j = i + 1; j < MAX_LENGTH; ++j) {
-         if ((list[j].ID < list[lowest].ID) && list[j].ID != 0) {
+        if (list[j]->ID == 0)
+            break;
+         if (list[j]->ID < list[lowest]->ID) {
             lowest = j;
          }
       }
