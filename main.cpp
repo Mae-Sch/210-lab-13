@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 using namespace std;
 
@@ -11,6 +12,7 @@ struct Student{
 };
 
 void sortArray(Student*);
+void displayStats(Student*);
 
 int main() {
     ifstream inFile("210-lab-13-grades.txt");
@@ -33,6 +35,7 @@ int main() {
     inFile.close();
 
     sortArray(studentsList);
+    displayStats(studentsList);
 
     ofstream outFile("210-lab-13-sorted-grades.txt");
 
@@ -73,4 +76,52 @@ void sortArray(Student *list) {
         list[lowest].ID = temp.ID;
         list[lowest].grade = temp.grade;
    }
+}
+
+void displayStats(Student* list) {
+    // find min score
+    int minIndex = 0;
+    for (int i = 0; i < MAX_LENGTH; ++i) {
+        if ((list[i].grade < list[minIndex].grade) && (list[i].grade > 1) && (list[i].ID > 0))
+            minIndex = i;
+    }
+
+    // find max score
+    int maxIndex = 0;
+    for (int i = 0; i < MAX_LENGTH; ++i) {
+        if (list[i].grade > list[minIndex].grade && (list[i].ID > 0))
+            maxIndex = i;
+    }
+
+    int length = 0;
+    for (int i = 0; i < MAX_LENGTH; ++i) {
+        if (list[i].grade > 1 && (list[i].ID > 0)) {
+            length++;
+        }
+    }
+
+    float total = 0;
+    for (int i = 0; i < MAX_LENGTH; ++i) {
+        if (list[i].grade > 1 && (list[i].ID > 0)) {
+            total += list[i].grade;
+        }
+    }
+
+    float mean = total / length;
+    int medianIndex = length / 2;
+
+    float variance = 0;
+    for (int i = 0; i < length; ++i) {
+        variance += (list[i].grade - mean) * (list[i].grade - mean);
+    }
+    variance = variance / (length - 1);
+
+    float deviation = sqrt(variance);
+
+    // Output code
+    cout << "Minimum Score: " << list[minIndex].grade << " by student: " << list[minIndex].ID << endl;
+    cout << "Maximum Score: " << list[maxIndex].grade << " by student: " << list[maxIndex].ID << endl;
+    cout << "Mean Score: " << mean << " (despite it's name, the score is quite nicies)" << endl;
+    cout << "Median Score: " << list[medianIndex].grade << " by student: " << list[medianIndex].ID << endl;
+    cout << "Standard Deviation: " << deviation << endl;
 }
